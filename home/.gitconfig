@@ -1,0 +1,4 @@
+# This is Git's per-user configuration file.
+[core]
+	name = shividhar
+	email = shivanshdhar@gmail.com
