@@ -1,30 +1,22 @@
-# Path to your oh-my-zsh installation.
-export ZSH=~/.oh-my-zsh
+source ~/antigen/antigen.zsh
 
-### Environment Variables
+# Load the oh-my-zsh's library.
+antigen use oh-my-zsh
 
-export GOPATH=$HOME/go
-export PATH=$PATH:$(go env GOPATH)/bin
+# Bundles from the default repo (robbyrussell's oh-my-zsh).
+antigen bundle git
+antigen bundle z
+antigen bundle vi-mode
+antigen bundle zsh-users/zsh-autosuggestions
+antigen bundle zsh-users/zsh-syntax-highlighting
 
-# Themes
-ZSH_THEME="agnoster"
+# Load the theme.
+antigen theme robbyrussell/oh-my-zsh themes/agnoster
 
-# Uncomment the following line to enable command auto-correction.
-# ENABLE_CORRECTION="true"
-
-# Uncomment the following line to display red dots whilst waiting for completion.
-# COMPLETION_WAITING_DOTS="true"
-
-# Plugins
-plugins=(git z vi-mode zsh-autosuggestions zsh-syntax-highlighting)
-
-source $ZSH/oh-my-zsh.sh
+# Tell Antigen that you're done.
+antigen apply
 
 # User configuration
-
-# Aliases
-alias vim=nvim
-alias gpp="g++ -std=c++11 -o "
 
 ### Reseting Username prompt ###
 DEFAULT_USER=`whoami`
