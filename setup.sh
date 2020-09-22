@@ -29,3 +29,6 @@ sudo cp ./resources/menlo-for-powerline.ttf /Library/Fonts/
 
 # Setup ZSH
 git clone https://github.com/zsh-users/antigen.git ~/antigen
+
+# Config files
+cp -R ./home/ ~/

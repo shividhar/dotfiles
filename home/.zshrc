@@ -26,3 +26,4 @@ prompt_dir() {
   prompt_segment blue black "${PWD##*/}"
 }
 
+alias vim=nvim
