@@ -27,3 +27,6 @@ prompt_dir() {
 }
 
 alias vim=nvim
+
+ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE='fg=23'
+
