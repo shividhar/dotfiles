@@ -35,3 +35,8 @@ ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE='fg=23'
 if [[ $(uname -m) == 'arm64' ]]; then
   eval $(/opt/homebrew/bin/brew shellenv)
 fi
+
+source ~/.bash_profile
+
+# Setup FZF
+source <(fzf --zsh)

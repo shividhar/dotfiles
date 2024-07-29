@@ -88,6 +88,6 @@ else
     printf "${GREEN}homesick already exists. Skipping install.\n\n"
 fi
 
-homesick clone 'shividhar/dotfiles'
+# homesick clone 'shividhar/dotfiles'
 homesick link dotfiles
 homesick pull dotfiles
