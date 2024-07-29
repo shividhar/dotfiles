@@ -17,22 +17,29 @@ packages=(
   coreutils
   findutils
   git
-  go
   neovim
-  jq
+  trash
 )
 
 brew install ${packages[@]}
 
 # Setup iTerm2 with custom preferences
-if [ ! -f /Applications/iTerm.app ]; then
-    printf "${GREEN}File not found!\n\n"
+if [ ! -e /Applications/iTerm.app ]; then
+    brew install --cask iterm2
+else
+    printf "${GREEN}iTerm2 already exists. Skipping install.\n\n"
 fi
-brew install --cask iterm2
 
-# Set Font
+# Github Credentials Manager
+if ! command -v git-credential-manager &> /dev/null
+then
+    brew install --cask git-credential-manager
+else
+    printf "${GREEN}Github Credentials Manager already exists. Skipping install.\n\n"
+fi
+
+# Set Font to Menlo-for-powerline
 printf "${GREEN}Copying 'menlo-for-powerline.ttf' font into /Library/Fonts/ if it doesn't already exist.\n\n"
-# sudo cp -n ./resources/menlo-for-powerline.ttf /Library/Fonts/
 cp -n ./resources/menlo-for-powerline.ttf /Library/Fonts/
 
 read -p "Do you wish to copy the iterm2 preferences?" -n 1 -r
@@ -68,6 +75,18 @@ else
            https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim'
 fi
 
-# printf "${GREEN}Installing plugins with vim-plug..."
-# nvim --headless +PlugInstall +qall
+printf "${GREEN}Installing plugins with vim-plug..."
+nvim --headless +PlugInstall +qall
 
+######### Setup sym-linking from dotfiles/home directory to $HOME/ #########
+if ! command -v homesick &> /dev/null
+then
+    printf "${GREEN}Installing homesick\n\n"
+    sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
+else
+    printf "${GREEN}homesick already exists. Skipping install.\n\n"
+fi
+
+homesick clone 'shividhar/dotfiles'
+homesick link dotfiles
+homesick pull dotfiles
