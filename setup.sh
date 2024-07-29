@@ -18,6 +18,7 @@ packages=(
   findutils
   git
   neovim
+  fzf
   trash
 )
 
