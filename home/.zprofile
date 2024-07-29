@@ -14,4 +14,5 @@ alias less='less -rN'
 alias mkdir='mkdir -p'
 
 # Darwin
-alias rm='mv --backup=numbered --target-directory=${HOME}/.Trash'
+# alias rm='mv --backup=numbered --target-directory=${HOME}/.Trash'
+alias rm="echo Use 'del', or the full path i.e. '/bin/rm'"

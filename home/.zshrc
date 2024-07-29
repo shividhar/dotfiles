@@ -30,3 +30,8 @@ alias vim=nvim
 
 ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE='fg=23'
 
+# M1 Mac needs this handling for some reason
+# Source: https://apple.stackexchange.com/questions/148901/why-does-my-brew-installation-not-work
+if [[ $(uname -m) == 'arm64' ]]; then
+  eval $(/opt/homebrew/bin/brew shellenv)
+fi

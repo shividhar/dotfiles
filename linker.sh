@@ -28,10 +28,8 @@ for file in home/.[^.]*; do
   fi
 done
 
-mkdir -p ~/.config/nvim
-ln -s ~/.vimrc ~/.config/nvim/init.vim
+# mkdir -p ~/.config/nvim
+# ln -s ~/.vimrc ~/.config/nvim/init.vim
 
 echo "(1) Remember to use chsh to change to /usr/local/bin/bash"
-echo "(2) Install plug"
-echo " curl -fLo ~/.local/share/nvim/site/autoload/plug.vim --create-dirs \ https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim"
-echo "(3) Run PlugInstall in Vim"
+echo "(2) Run PlugInstall in Vim"
