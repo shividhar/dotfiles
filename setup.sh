@@ -8,6 +8,11 @@ if ! command -v brew &> /dev/null
 then
     printf "${GREEN} Installing Homebrew\n\n"
     /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+# From the Homebrew installation guide
+# - Run these commands in your terminal to add Homebrew to your PATH:
+    echo >> ~/.zprofile
+    echo 'eval "$(/opt/homebrew/bin/brew shellenv)"' >> ~/.zprofile
+    eval "$(/opt/homebrew/bin/brew shellenv)"
 else
     printf "${GREEN} Homebrew already exists. Skipping install.\n\n"
 fi
@@ -77,6 +82,7 @@ else
 fi
 
 printf "${GREEN}Installing plugins with vim-plug..."
+nvim --headless +PlugUpgrade +qall
 nvim --headless +PlugInstall +qall
 
 ######### Setup sym-linking from dotfiles/home directory to $HOME/ #########
@@ -88,6 +94,9 @@ else
     printf "${GREEN}homesick already exists. Skipping install.\n\n"
 fi
 
+# TODO(shivdhar): Figure out a better way to symlink dotfiles from this repo to
+# the local envirnoment than this!!!
+gem install homesick
 # homesick clone 'shividhar/dotfiles'
 homesick link dotfiles
 homesick pull dotfiles
