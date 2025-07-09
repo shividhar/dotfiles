@@ -26,7 +26,9 @@ prompt_dir() {
   prompt_segment blue black "${PWD##*/}"
 }
 
+# Editor Settings
 alias vim=nvim
+
 
 ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE='fg=23'
 
