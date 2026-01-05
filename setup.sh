@@ -1,102 +1,77 @@
 #!/bin/bash
+set -e
 
 GREEN='\033[0;32m'
-NC='\033[0m' # No Color
+NC='\033[0m'
 
-# Install Homebrew
-if ! command -v brew &> /dev/null
-then
-    printf "${GREEN} Installing Homebrew\n\n"
+# Install Homebrew if not present
+if ! command -v brew &> /dev/null; then
+    printf "${GREEN}Installing Homebrew...${NC}\n"
     /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-# From the Homebrew installation guide
-# - Run these commands in your terminal to add Homebrew to your PATH:
     echo >> ~/.zprofile
     echo 'eval "$(/opt/homebrew/bin/brew shellenv)"' >> ~/.zprofile
     eval "$(/opt/homebrew/bin/brew shellenv)"
 else
-    printf "${GREEN} Homebrew already exists. Skipping install.\n\n"
+    printf "${GREEN}Homebrew already exists. Skipping install.${NC}\n"
 fi
 
-packages=(
-  binutils
-  coreutils
-  findutils
-  git
-  neovim
-  fzf
-  trash
-)
+# Install all packages from Brewfile
+printf "${GREEN}Installing packages from Brewfile...${NC}\n"
+brew bundle --file=./Brewfile
 
-brew install ${packages[@]}
+# Stow all configs
+printf "${GREEN}Symlinking dotfiles with stow...${NC}\n"
+stow zsh git gh graphite claude nvim
 
-# Setup iTerm2 with custom preferences
-if [ ! -e /Applications/iTerm.app ]; then
-    brew install --cask iterm2
+# Setup ZSH plugins (zinit bootstraps itself in .zshrc)
+printf "${GREEN}Initializing zinit plugins...${NC}\n"
+zsh -ic "exit" 2>/dev/null || true
+
+# Setup neovim plugins (lazy.nvim bootstraps itself)
+printf "${GREEN}Syncing neovim plugins...${NC}\n"
+nvim --headless "+Lazy! sync" +qa 2>/dev/null || true
+
+# Configure git user info (optional) - creates ~/.gitconfig.local
+printf "\n${GREEN}Git Configuration${NC}\n"
+if [ -f ~/.gitconfig.local ]; then
+    printf "~/.gitconfig.local already exists. Skipping.\n"
 else
-    printf "${GREEN}iTerm2 already exists. Skipping install.\n\n"
+    read -p "Do you want to configure Git user info? [y/N] " configure_git
+    if [[ "$configure_git" =~ ^[Yy]$ ]]; then
+        read -p "Enter your Git name: " git_name
+        read -p "Enter your Git email: " git_email
+        read -p "Enter GPG signing key ID (or press Enter to skip): " gpg_key
+
+        # Create ~/.gitconfig.local with personal settings
+        cat > ~/.gitconfig.local << EOF
+# Machine-specific git settings (not tracked in dotfiles)
+[user]
+    name = $git_name
+    email = $git_email
+EOF
+
+        if [ -n "$gpg_key" ]; then
+            cat >> ~/.gitconfig.local << EOF
+    signingkey = $gpg_key
+EOF
+        fi
+
+        # Add credential helper if git-credential-manager is installed
+        if command -v git-credential-manager &> /dev/null; then
+            cat >> ~/.gitconfig.local << EOF
+[credential]
+    helper = $(which git-credential-manager)
+EOF
+        fi
+
+        printf "Created ~/.gitconfig.local\n"
+    else
+        printf "Skipping Git configuration. You can create ~/.gitconfig.local later.\n"
+    fi
 fi
 
-# Github Credentials Manager
-if ! command -v git-credential-manager &> /dev/null
-then
-    brew install --cask git-credential-manager
-else
-    printf "${GREEN}Github Credentials Manager already exists. Skipping install.\n\n"
-fi
-
-# Set Font to Menlo-for-powerline
-printf "${GREEN}Copying 'menlo-for-powerline.ttf' font into /Library/Fonts/ if it doesn't already exist.\n\n"
-cp -n ./resources/menlo-for-powerline.ttf /Library/Fonts/
-
-read -p "Do you wish to copy the iterm2 preferences?" -n 1 -r
-echo    # (optional) move to a new line
-if [[ $REPLY =~ ^[Yy]$ ]]
-then
-    cp ./resources/com.googlecode.iterm2.plist ~/Library/Preferences/
-else
-    printf "\n"
-fi
-
-# Setup ZSH
-if  test -d ~/antigen; then
-    printf "${GREEN}~/antigen already exists. Skipping install.\n\n"
-else
-    printf "${GREEN} Installing antigen plugin manager for zsh ${NC}\n\n"
-    git clone https://github.com/zsh-users/antigen.git ~/antigen
-fi
-
-if ! command -v zsh &> /dev/null
-then
-    printf "${GREEN}Installing ZSH\n\n"
-    sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
-else
-    printf "${GREEN}ZSH already exists. Skipping install.\n\n"
-fi
-
-if  test -d $HOME/.local/share/nvim; then
-    printf "${GREEN}Vim-plug already installed. Skipping install.\n\n"
-else
-    printf "${GREEN}Installing vim-plug. Plugin manager for Vim/Neovim.\n\n"
-    sh -c 'curl -fLo "${XDG_DATA_HOME:-$HOME/.local/share}"/nvim/site/autoload/plug.vim --create-dirs \
-           https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim'
-fi
-
-printf "${GREEN}Installing plugins with vim-plug..."
-nvim --headless +PlugUpgrade +qall
-nvim --headless +PlugInstall +qall
-
-######### Setup sym-linking from dotfiles/home directory to $HOME/ #########
-if ! command -v homesick &> /dev/null
-then
-    printf "${GREEN}Installing homesick\n\n"
-    sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
-else
-    printf "${GREEN}homesick already exists. Skipping install.\n\n"
-fi
-
-# TODO(shivdhar): Figure out a better way to symlink dotfiles from this repo to
-# the local envirnoment than this!!!
-gem install homesick
-# homesick clone 'shividhar/dotfiles'
-homesick link dotfiles
-homesick pull dotfiles
+printf "\n${GREEN}Done! See README.md for manual steps:${NC}\n"
+printf "  1. Configure iTerm2 to load prefs from ~/dotfiles/iterm2\n"
+printf "  2. Add Claude Code hooks to ~/.claude/settings.json\n"
+printf "  3. Set terminal font to 'MesloLGS Nerd Font'\n"
+printf "  4. Create ~/.zshrc.local for machine-specific config (postgres, docker, etc.)\n"

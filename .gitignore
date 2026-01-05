@@ -1,1 +1,15 @@
 .DS_STORE
+
+# Sensitive files - do not commit
+**/hosts.yml
+**/user_config
+**/*secret*
+**/*token*
+**/*.pem
+**/*.key
+
+# Generated files
+nvim/.config/nvim/.netrwhist
+
+# Machine-local shell config
+**/.zshrc.local
