@@ -10,11 +10,10 @@ dotfiles/
 ├── setup.sh          # Bootstrap script
 ├── README.md
 │
-├── zsh/              # Stow package: .zshrc, .zprofile, .zenv
+├── zsh/              # Stow package: .zshrc, .zprofile
 ├── git/              # Stow package: .gitconfig, .config/git/ignore
 ├── gh/               # Stow package: .config/gh/config.yml
 ├── graphite/         # Stow package: .config/graphite/aliases
-├── conda/            # Stow package: .condarc
 ├── claude/           # Stow package: .claude/hooks/
 ├── nvim/             # Stow package: .config/nvim/
 └── iterm2/           # iTerm2 preferences (synced by iTerm2)
@@ -77,28 +76,25 @@ Add notification hooks to `~/.claude/settings.json`:
 
 **Note:** Ensure Focus Mode allows notifications from `terminal-notifier` in System Settings.
 
-## Adding New Configs
+### Machine-Local Config
 
-To add a new stow package:
+The setup script creates `~/.gitconfig.local` for your git user/email/GPG key.
 
-```bash
-# Create package directory mirroring home structure
-mkdir -p newpkg/.config/appname
-
-# Add config files
-cp ~/.config/appname/config newpkg/.config/appname/
-
-# Stow it
-stow newpkg
-
-# Add to setup.sh stow command
-```
-
-## Updating
-
-After pulling changes:
+Create `~/.zshrc.local` for machine-specific shell settings (not tracked in git):
 
 ```bash
-cd ~/dotfiles
-stow zsh git gh graphite conda claude nvim  # Re-stow to update symlinks
+# Example ~/.zshrc.local
+
+# PATH additions
+export PATH="/opt/homebrew/opt/postgresql@16/bin:$PATH"
+
+# Work-specific
+alias pytest='ENV=test uv run pytest --no-cov'
+export CORE_WORKSPACE='/Users/you/work/project'
+
+# Docker completions (if installed)
+fpath=(/Users/you/.docker/completions $fpath)
+autoload -Uz compinit
+compinit
 ```
+
