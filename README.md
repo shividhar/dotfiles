@@ -52,26 +52,12 @@ Set font:
 
 ### Claude Code
 
-Add notification hooks to `~/.claude/settings.json`:
+The `settings.json` is now tracked and includes notification hooks and MCP servers (Linear, Sentry).
 
-```json
-"hooks": {
-  "Stop": [
-    {
-      "hooks": [
-        { "type": "command", "command": "~/.claude/hooks/notify.sh \"Task completed\"" }
-      ]
-    }
-  ],
-  "Notification": [
-    {
-      "matcher": "permission_prompt",
-      "hooks": [
-        { "type": "command", "command": "~/.claude/hooks/notify.sh \"Permission needed\"" }
-      ]
-    }
-  ]
-}
+After setup, authenticate with the MCP servers:
+```bash
+claude mcp login linear
+claude mcp login sentry
 ```
 
 **Note:** Ensure Focus Mode allows notifications from `terminal-notifier` in System Settings.
